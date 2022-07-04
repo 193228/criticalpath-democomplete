@@ -1,0 +1,2 @@
+def getMaterias(ruta):
+    print("")
