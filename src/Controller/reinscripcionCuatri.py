@@ -1,4 +1,5 @@
 from src.Controller.aperturaMaterias import *
+from src.Model.relation_materies import getRelations
 
 
 def materiasReinscribirse(mes_reinscribirse,CLAVE,listaMateriasAbiertas,materiasAprobadaAlumno):
@@ -54,5 +55,66 @@ def periodorReinscripcion(mes):
         resultado = "Enero-Abril"
 
     return resultado
+
+def getData(diccionario,periodo):
+    lista = []
+    print("Periodo para ruta critica "+periodo)
+
+    materiasDependencias = getRelations()
+    df = pd.DataFrame(materiasDependencias)
+    materia = df['materia'].values.flatten().tolist()
+
+    enero_abril = [1, 2, 4, 5, 7, 8, 10]
+    mayo_agosto = [2, 3, 5, 6, 8, 9]
+    septiembre_diciembre = [1, 3, 4, 6, 7, 9, 10]
+
+    for i in range(len(diccionario)):
+        if diccionario[i]['materia'] in materia:
+            print(diccionario[i])
+            if diccionario[i]['Periodo'] == 'Septiembre-Diciembre':
+                x = getName(diccionario[i],df)
+                for i in range(len(x)):
+                    if x[i]['cuatrimestreObjetivo'] in enero_abril:
+                        lista.append(x[i])
+                    else:
+                        print("no esta porque en el periodo de enero-abril no puede tomar materias de "+str(x[i]['cuatrimestreObjetivo'])+" Cuatrimestre")
+                        lista.append(x[i])
+
+            if diccionario[i]['Periodo'] == 'Enero-Abril':
+                x = getName(diccionario[i],df)
+                for i in range(len(x)):
+                    if x[i]['cuatrimestreObjetivo'] in mayo_agosto:
+                        lista.append(x[i])
+                    else:
+                        print("no esta porque en el periodo de enero-abril no puede tomar materias de "+str(x[i]['cuatrimestreObjetivo'])+" Cuatrimestre")
+                        print(x[i])
+
+            if diccionario[i]['Periodo'] == 'Mayo-Agosto':
+                x = getName(diccionario[i],df)
+                for i in range(len(x)):
+                    if x[i]['cuatrimestreObjetivo'] in septiembre_diciembre:
+                        lista.append(x[i])
+                    else:
+                        print("no esta porque en el periodo de enero-abril no puede tomar materias de "+str(x[i]['cuatrimestreObjetivo'])+" Cuatrimestre")
+                        print(x[i])
+
+        else:
+            print("no esta en las que puede tomar")
+
+    return lista
+
+def getName(diccionario,df):
+    l = []
+    for i in range(len(df)):
+        if diccionario['materia'] in df['materia'][i]:
+            x = {
+                "nombreMateria":df['materia'][i],
+                "dependeDe":df['depende'][i],
+                "cuatrimestreObjetivo":df['cuatrimestreObjetivo'][i],
+                "duracion":15
+            }
+            l.append(x)
+    print(l)
+    return l
 
 

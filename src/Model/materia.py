@@ -1,4 +1,4 @@
-class crearMateria:
+'''class crearMateria:
   def __init__(self, idMateria, nombreMateria, creditos, horasSemana, totalHoras, preRequisito, periodo):
     self.idMateria = idMateria,
     self.nombreMateria = nombreMateria,
@@ -7,4 +7,4 @@ class crearMateria:
     self.totalHoras = totalHoras,
     self.preRequisito = preRequisito,
     self.periodo = periodo
-
+'''
