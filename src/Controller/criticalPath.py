@@ -31,80 +31,8 @@ def getDicc(periodo):
             "totalHoras": df['TotalHoras'],
             "preRequisito": preRequisito,
             "periodo": df['Periodo'],
-            #"dependencias": (df['Nombre'],materiaDependiente),
             "materiaDependiente": materiaDependiente,
             "duracion": int(df["TotalHoras"]) / int(df["HorasSemana"])
-            #"dependencias": (df['Nombre'],consulta)
         }
         listaMaterias.append(diccionario)
     return listaMaterias
-
-'''def getRelations(diccionario):
-    l = []
-    for i in range(len(diccionario)):
-        dicc = {
-            "nombreMateria":diccionario[i]['nombre'],
-            "materiaDepende":diccionario[i]['materiaDependiente'],
-            "duracion":int(diccionario[i]["totalHoras"])/int(diccionario[i]["horasSemana"])
-        }
-        l.append(dicc)
-    df = pd.DataFrame(l)
-    return df'''
-
-def getCriticalPath(datos):
-    # Crear el proyecto "p"
-    p = Node('proyecto')
-    '''tarea = [("A", {"duracion": 3}),
-              ("B", {"duracion": 2}),
-              ("C", {"duracion": 4}),
-              ("D", {"duracion": 3}),
-              ("E", {"duracion": 2}),
-              ("F", {"duracion": 4}),
-              ("G", {"duracion": 2}),
-              ("H", {"duracion": 1}),
-              ("I", {"duracion": 2}),
-              ("J", {"duracion": 4})]
-
-    dependencia = [("A", "E"),
-                    ("B", "E"),
-                    ("E", "F"),
-                    ("F", "G"),
-                    ("G", "I"),
-                    ("I", "J"),
-                    ("C", "J"),
-                    ("H", "I"),
-                    ("D", "H")]
-
-
-    print(tarea)
-    print(dependencia)'''
-
-    tareas = []
-
-    for i in range(len(datos)):
-        x = (datos[i]['nombre'],{"duracion": int(datos[i]['duracion'])})
-        tareas.append(x)
-
-    dependencias = []
-
-    for i in range(len(datos)):
-        y = (datos[i]['nombre'],datos[i]['materiaDependiente'])
-        dependencias.append(y)
-
-    print(tareas)
-    print(dependencias)
-
-
-    # Cargar al proyecto las tareas y sus duraciones
-    for i in tareas:
-        p.add(Node(i[0], duration=i[1]["duracion"]))
-
-    # Cargar al proyecto sus dependencias (secuencias)
-    for j in dependencias:
-        p.link(j[0], j[1])
-
-    # Actualizar el proyecto:
-    p.update_all()
-
-    print(p.get_critical_path())
-    print(p.duration)
