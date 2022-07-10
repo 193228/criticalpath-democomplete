@@ -75,6 +75,7 @@ def statusActual(ventana):
         print("------------------------------ ESTAS SON MATERIAS QUE LE FALTA AL ALUMNO CON LA MATRICULA "+str("193228")+" -------------------------")
         for index, datos in listaMateriasAbiertas.iterrows():
             if datos['Nombre'] not in materiasAprobadaAlumno:
+                print(datos)
                 faltantes = {
                     "nombre": datos['Nombre'],
                     "periodo": datos['Periodo']
@@ -92,17 +93,16 @@ def statusActual(ventana):
                 lista.append(resultado)
 
         relaciones = getRelation(lista)
-        listaMaterias = getMaterias()
 
         if not relaciones.empty:
             #b = calcularRutaCritica(relaciones, listaMaterias)
             #print(b.get_critical_path())
             print("YA QUEDO ESTATUS ACTUAL")
-            graphStatusActual(aprobado, reprobado, listaMateriasFaltantes, relaciones, listaMateriasAbiertas)
+            graphStatusActual(aprobado, reprobado, listaMateriasFaltantes, relaciones, listaMateriasAbiertas, matriculaAlumno)
         else:
             print("No se registro ninguna materia dependiente. No existe ruta Critica. Agarre cualquier materia que le falte -> "+random.choice(lm))
             print("YA QUEDO ESTATUS ACTUAL")
-            graphStatusActual(aprobado, reprobado, listaMateriasFaltantes,relaciones,listaMateriasAbiertas)
+            graphStatusActual(aprobado, reprobado, listaMateriasFaltantes,relaciones,listaMateriasAbiertas, matriculaAlumno)
 
     except:
         print("ocurrio un error")
@@ -133,7 +133,7 @@ def reinscripcion(ventana):
 
         listaMateriasFaltantes = pd.DataFrame(materiasFaltantes)
 
-        inscripcion = materiasReinscribirse(dt, CLAVE, listaMaterias, materiasAprobadaAlumno)
+        inscripcion = materiasReinscribirse(dt, CLAVE, listaMateriasAbiertas, materiasAprobadaAlumno)
         listaDependencias = getData(inscripcion,periodorReinscripcion(dt))
 
         if len(listaDependencias) != 0:
@@ -149,17 +149,18 @@ def reinscripcion(ventana):
                 b = calcularRutaCritica(relaciones, listaMaterias)
                 print(b.get_critical_path())
                 print("YA QUEDO INSCRIPCION")
-                graphStatusActual(aprobado,reprobado,listaMateriasFaltantes, relaciones, listaMateriasAbiertas)
+                graphReinscripcion(aprobado,reprobado,listaMateriasFaltantes, relaciones, listaMateriasAbiertas,matriculaAlumno)
             else:
                 print( "No se registro ninguna materia dependiente. No existe ruta Critica. Agarre cualquier materia que le falte -> " + random.choice(lm))
                 print("YA QUEDO Inscripcion")
-                graphStatusActual(aprobado,reprobado,listaMateriasFaltantes, relaciones, listaMateriasAbiertas)
+                graphReinscripcion(aprobado,reprobado,listaMateriasFaltantes, relaciones, listaMateriasAbiertas,matriculaAlumno)
 
         else:
             df = pd.DataFrame(inscripcion)
             materias = df['materia'].values.flatten().tolist()
             print("No se registro ninguna materia dependiente. No existe ruta Critica. Agarre cualquier materia que le falte -> " + random.choice(materias))
-            graphReinscripcion(materias)
+            graphReinscripcion(aprobado, reprobado, listaMateriasFaltantes, pd.DataFrame(), listaMateriasAbiertas, str(matriculaAlumno))
+
     except:
         print("Ocurrio un error")
         pass

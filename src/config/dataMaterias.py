@@ -1,2 +1,0 @@
-def getMaterias(ruta):
-    print("")
