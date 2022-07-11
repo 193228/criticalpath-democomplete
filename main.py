@@ -2,23 +2,29 @@ import datetime
 import os
 import random
 import sys
+from multiprocessing import Process
+from threading import Thread
 
 import pandas as pd
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtCore import QRunnable, Qt, QThreadPool, QThread
 
+from fastest import run_dash
 from src.Controller.Graphs import graphStatusActual, graphReinscripcion
 from src.Controller.datosAlumnado import *
-from src.Controller.getDependencesByName import getDependencesByName, obtenerRelacionesByName, getMaterias, \
+from src.Controller.getDependencesByName import getDependencesByName, getMaterias, \
     calcularRutaCritica, getRelation
+from src.Controller.graficos import graficoReinscripcion
 from src.Controller.reinscripcionCuatri import *
 from src.Model.relation_materies import getRelations
 from src.View.vistaRutaCritica import Ui_MainWindow as ventanaPrincipal
 import warnings
 warnings.filterwarnings("ignore")
-
 CLAVE = "004"
+
+relaciones = ""
 
 class MyApp(QtWidgets.QMainWindow, ventanaPrincipal):
     def __init__(self):
@@ -98,11 +104,11 @@ def statusActual(ventana):
             #b = calcularRutaCritica(relaciones, listaMaterias)
             #print(b.get_critical_path())
             print("YA QUEDO ESTATUS ACTUAL")
-            graphStatusActual(aprobado, reprobado, listaMateriasFaltantes, relaciones, listaMateriasAbiertas, matriculaAlumno)
+            graphStatusActual(aprobado, reprobado, listaMateriasFaltantes, relaciones, listaMateriasAbiertas, matriculaAlumno, periodoActual(dt))
         else:
             print("No se registro ninguna materia dependiente. No existe ruta Critica. Agarre cualquier materia que le falte -> "+random.choice(lm))
             print("YA QUEDO ESTATUS ACTUAL")
-            graphStatusActual(aprobado, reprobado, listaMateriasFaltantes,relaciones,listaMateriasAbiertas, matriculaAlumno)
+            graphStatusActual(aprobado, reprobado, listaMateriasFaltantes,relaciones,listaMateriasAbiertas, matriculaAlumno, periodoActual(dt))
 
     except:
         print("ocurrio un error")
@@ -149,22 +155,21 @@ def reinscripcion(ventana):
                 b = calcularRutaCritica(relaciones, listaMaterias)
                 print(b.get_critical_path())
                 print("YA QUEDO INSCRIPCION")
-                graphReinscripcion(aprobado,reprobado,listaMateriasFaltantes, relaciones, listaMateriasAbiertas,matriculaAlumno)
+                graphReinscripcion(aprobado,reprobado,listaMateriasFaltantes, relaciones, listaMateriasAbiertas,matriculaAlumno, periodorReinscripcion(dt))
             else:
                 print( "No se registro ninguna materia dependiente. No existe ruta Critica. Agarre cualquier materia que le falte -> " + random.choice(lm))
                 print("YA QUEDO Inscripcion")
-                graphReinscripcion(aprobado,reprobado,listaMateriasFaltantes, relaciones, listaMateriasAbiertas,matriculaAlumno)
+                graphReinscripcion(aprobado,reprobado,listaMateriasFaltantes, relaciones, listaMateriasAbiertas,matriculaAlumno,periodorReinscripcion(dt))
 
         else:
             df = pd.DataFrame(inscripcion)
             materias = df['materia'].values.flatten().tolist()
             print("No se registro ninguna materia dependiente. No existe ruta Critica. Agarre cualquier materia que le falte -> " + random.choice(materias))
-            graphReinscripcion(aprobado, reprobado, listaMateriasFaltantes, pd.DataFrame(), listaMateriasAbiertas, str(matriculaAlumno))
+            graphReinscripcion(aprobado, reprobado, listaMateriasFaltantes, pd.DataFrame(), listaMateriasAbiertas, matriculaAlumno, periodorReinscripcion(dt))
 
     except:
         print("Ocurrio un error")
         pass
-
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)  # crea un objeto de aplicación (Argumentos de sys)

@@ -1,6 +1,6 @@
 import pandas as pd
 
-from main import mostrarMensajes
+from main import *
 from src.Services.dbConnect import conexionBd
 from src.Services.querys import queryDatosAlumno
 
